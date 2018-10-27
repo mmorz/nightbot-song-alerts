@@ -23,8 +23,12 @@ rules:
   max-len:
     - 2
     - 80
-  prettier/prettier: 2
+  prettier/prettier:
+    - error
+    - singleQuote: true
+      trailingComma: all
   no-console: 0
+  react/prop-types: 0
 
 settings:
   react:
