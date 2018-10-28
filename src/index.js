@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import { fromJS } from 'immutable';
+import { fromJS, List } from 'immutable';
 import debounce from 'lodash/debounce';
 import { Provider } from 'react-redux';
 import axios from 'axios';
@@ -19,9 +19,15 @@ const sagaMiddleware = createSagaMiddleware();
 
 const logger = createLogger({ stateTransformer: state => state.toJS() });
 
+const baseMiddleware = List([sagaMiddleware]);
+
 const store = createStore(
   notificationReducer,
-  applyMiddleware(logger, sagaMiddleware),
+  applyMiddleware(
+    ...(process.env.NODE_ENV === 'development'
+      ? baseMiddleware.push(logger)
+      : baseMiddleware),
+  ),
 );
 
 store.subscribe(
