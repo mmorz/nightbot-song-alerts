@@ -9,9 +9,9 @@ const Container = styled.div`
   display: inline-block;
 `;
 
-const GithubRibbon = ({ className }) => (
+const GithubRibbon = () => (
   <Container>
-    <a className={className} href="https://github.com/you">
+    <a href="https://github.com/mmorz/nightbot-song-alerts">
       <OffsetImg
         src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" // eslint-disable-line
         alt="Fork me on GitHub"

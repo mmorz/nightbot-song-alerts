@@ -7,7 +7,8 @@
   "scripts": {
     "start": "webpack-dev-server --progress --config ./config/webpack.dev.js",
     "build": "webpack --config ./config/webpack.prod.js --progress",
-    "lint": "eslint --ignore-path ./config/.eslintignore -c ./config/.eslintrc.yaml ."
+    "lint": "eslint --ignore-path ./config/.eslintignore -c ./config/.eslintrc.yaml .",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +29,7 @@
     "eslint-plugin-prettier": "3.0.0",
     "eslint-plugin-react": "7.11.1",
     "extensible-runtime": "4.1.0",
+    "gh-pages": "2.0.1",
     "html-webpack-plugin": "4.0.0-beta.2",
     "prettier": "1.14.3",
     "style-loader": "0.23.1",
