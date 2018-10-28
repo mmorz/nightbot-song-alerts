@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import { fromJS } from 'immutable';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { Provider } from 'react-redux';
 import axios from 'axios';
 import { applyMiddleware } from 'redux';
@@ -31,6 +31,7 @@ store.subscribe(
       const state = store.getState();
       localStorage.set('channels', state.get('channels').toJS());
       localStorage.set('username', state.get('username'));
+      localStorage.set('enabled', state.get('enabled'));
     },
     1000,
     { leading: true },

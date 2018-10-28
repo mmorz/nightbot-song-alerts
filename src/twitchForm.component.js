@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 
 const AddButton = styled.button`
@@ -6,15 +6,11 @@ const AddButton = styled.button`
 `;
 
 const ChannelInput = styled.input`
-  && {
-    width: auto;
-  }
-
+  min-width: 0;
   flex: 1;
 `;
 
 const ChannelRow = styled.div`
-  width: 100%;
   display: flex;
 `;
 
@@ -25,27 +21,30 @@ const TwitchForm = ({
   onNewChannel,
   onUsernameChange,
 }) => (
-  <form onSubmit={onSubmit}>
-    <div>
-      Enter your twitch username:
-      <input value={username} onChange={onUsernameChange} type="text" />
-    </div>
+  <Fragment>
+    <p>Get notified when your song request starts to play.</p>
+    <form onSubmit={onSubmit}>
+      <div>
+        Enter your twitch username:
+        <input value={username} onChange={onUsernameChange} type="text" />
+      </div>
 
-    <div>
-      Add new channel whose song requests to get alerts:
-      <ChannelRow>
-        <ChannelInput
-          name="newChannel"
-          type="text"
-          value={newChannel}
-          onChange={onNewChannel}
-        />
-        <AddButton className="button-outline" type="submit">
-          add
-        </AddButton>
-      </ChannelRow>
-    </div>
-  </form>
+      <div>
+        Add new channel whose song requests to get alerts:
+        <ChannelRow>
+          <ChannelInput
+            name="newChannel"
+            type="text"
+            value={newChannel}
+            onChange={onNewChannel}
+          />
+          <AddButton className="button-outline" type="submit">
+            add
+          </AddButton>
+        </ChannelRow>
+      </div>
+    </form>
+  </Fragment>
 );
 
 export default TwitchForm;

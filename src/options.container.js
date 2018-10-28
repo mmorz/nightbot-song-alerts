@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import localStorage from 'local-storage';
 
 import TwitchForm from './twitchForm.component';
+import GithubRibbon from './github.component';
+import ChannelList from './channelList.component';
 
 import {
   setUsername,
@@ -14,45 +16,14 @@ import {
   startPollingChannels,
 } from './notification.ducks';
 
-const EnableColumn = styled.div`
-  flex: 1;
-`;
-
-const EnableButton = styled.button`
-  margin: 0 auto;
-  display: block;
-`;
-
-const ChannelList = styled.ul`
-  flex: 1;
-`;
-
-const Grid = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-
 const MainColumn = styled.div`
-  width: 800px;
+  max-width: 800px;
   margin: 50px auto;
+  padding: 20px 10px;
 `;
 
 const Header = styled.h2`
   text-align: center;
-`;
-
-const Channel = styled.span`
-  margin-right: auto;
-`;
-
-const DeleteButton = styled.button`
-  flex: 0;
-  margin-bottom: 0;
-`;
-
-const ListRow = styled.li`
-  align-items: center;
-  display: flex;
 `;
 
 class Options extends React.Component {
@@ -62,7 +33,11 @@ class Options extends React.Component {
   };
 
   componentDidMount() {
-    this.props.startPolling(this.props.channels);
+    const { channels, enabled, startPolling } = this.props;
+
+    if (enabled) {
+      startPolling(channels);
+    }
   }
 
   changeField = field => e => {
@@ -80,62 +55,49 @@ class Options extends React.Component {
     const newChannelLower = newChannel.toLowerCase();
 
     return (
-      <MainColumn>
-        <Header>Nightbot song request notifications</Header>
-        <TwitchForm
-          username={username}
-          newChannel={newChannel}
-          onUsernameChange={e => {
-            this.changeField('username')(e);
-            this.saveUsername(e.target.value.toLowerCase());
-          }}
-          onNewChannel={this.changeField('newChannel')}
-          onSubmit={e => {
-            e.preventDefault();
+      <Fragment>
+        <GithubRibbon />
+        <MainColumn>
+          <Header>Nightbot song request notifications</Header>
+          <TwitchForm
+            username={username}
+            newChannel={newChannel}
+            onUsernameChange={e => {
+              this.changeField('username')(e);
+              this.saveUsername(e.target.value.toLowerCase());
+            }}
+            onNewChannel={this.changeField('newChannel')}
+            onSubmit={e => {
+              e.preventDefault();
 
-            if (!newChannel) return;
+              if (!newChannel) return;
 
-            this.setState({ newChannel: '' }, () => {
-              !channels.has(newChannelLower) &&
-                onChannelSubmit(newChannelLower);
-            });
-          }}
-        />
-        <Grid>
-          <ChannelList>
-            {channels.map((c, i) => (
-              <ListRow key={c + i}>
-                <Channel>{c}</Channel>
-                <DeleteButton
-                  className="button-outline"
-                  onClick={this.props.deleteChannel(c)}
-                >
-                  delete
-                </DeleteButton>
-              </ListRow>
-            ))}
-          </ChannelList>
-          <EnableColumn>
-            <EnableButton
-              onClick={() => {
-                if (!enabled && Notification.permission !== 'granted') {
-                  Notification.requestPermission().then(result => {
-                    if (result === 'granted') {
-                      this.props.toggleNotifications();
-                    }
-                  });
-                } else if (Notification.permission === 'granted') {
-                  this.props.toggleNotifications();
-                } else {
-                  console.error('no permission given!!!');
-                }
-              }}
-            >
-              {enabled ? 'disable' : 'enable'}
-            </EnableButton>
-          </EnableColumn>
-        </Grid>
-      </MainColumn>
+              this.setState({ newChannel: '' }, () => {
+                !channels.has(newChannelLower) &&
+                  onChannelSubmit(newChannelLower);
+              });
+            }}
+          />
+          <ChannelList
+            deleteChannel={this.props.deleteChannel}
+            channels={channels}
+            enabled={enabled}
+            handleEnable={() => {
+              if (!enabled && Notification.permission !== 'granted') {
+                Notification.requestPermission().then(result => {
+                  if (result === 'granted') {
+                    this.props.toggleNotifications();
+                  }
+                });
+              } else if (Notification.permission === 'granted') {
+                this.props.toggleNotifications();
+              } else {
+                console.error('no permission given!!!');
+              }
+            }}
+          />
+        </MainColumn>
+      </Fragment>
     );
   }
 }

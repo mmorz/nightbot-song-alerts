@@ -29,7 +29,7 @@ export const checkSongQueue = async (channelId, username) => {
     });
 
     const _id = data.getIn(['_currentSong', '_id']);
-    const currentName = data.getIn(['_currentSong', 'name']);
+    const currentName = data.getIn(['_currentSong', 'user', 'name']);
     const nextName = data.getIn(['queue', 0, 'user', 'name']);
 
     return {

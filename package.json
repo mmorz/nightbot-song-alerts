@@ -1,11 +1,13 @@
 {
   "name": "nightbot-songalert-v3",
+  "sideEffects": false,
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --progress",
-    "lint": "eslint \"src/**/*.js\""
+    "start": "webpack-dev-server --progress --config ./config/webpack.dev.js",
+    "build": "webpack --config ./config/webpack.prod.js --progress",
+    "lint": "eslint --ignore-path ./config/.eslintignore -c ./config/.eslintrc.yaml ."
   },
   "keywords": [],
   "author": "",
@@ -16,6 +18,7 @@
     "@babel/polyfill": "7.0.0",
     "@babel/preset-env": "7.1.0",
     "@babel/preset-react": "7.0.0",
+    "ava": "1.0.0-rc.1",
     "babel-eslint": "10.0.1",
     "babel-loader": "8.0.4",
     "babel-plugin-extensible-destructuring": "4.2.3",
@@ -25,10 +28,11 @@
     "eslint-plugin-prettier": "3.0.0",
     "eslint-plugin-react": "7.11.1",
     "extensible-runtime": "4.1.0",
-    "html-webpack-plugin": "3.2.0",
+    "html-webpack-plugin": "4.0.0-beta.2",
     "prettier": "1.14.3",
     "style-loader": "0.23.1",
     "webpack": "4.23.1",
+    "webpack-bundle-analyzer": "3.0.3",
     "webpack-cli": "3.1.2",
     "webpack-dev-server": "3.1.10"
   },
