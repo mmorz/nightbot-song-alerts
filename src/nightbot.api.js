@@ -1,7 +1,13 @@
 import axios from 'axios';
+import { fromJS, Map } from 'immutable';
 
 const NIGHTBOT_ID_API = 'https://api.nightbot.tv/1/channels/t/';
 const NIGHTBOT_QUEUE_URL = 'https://api.nightbot.tv/1/song_requests/queue';
+
+axios.interceptors.response.use(
+  response => fromJS(response),
+  error => Promise.reject(error),
+);
 
 export const fetchNightbotId = async channel => {
   try {
@@ -32,11 +38,11 @@ export const checkSongQueue = async (channelId, username) => {
     const currentName = data.getIn(['_currentSong', 'user', 'name']);
     const nextName = data.getIn(['queue', 0, 'user', 'name']);
 
-    return {
+    return Map({
       idForNotification:
         !!currentName && currentName.toLowerCase() === username ? _id : null,
       nextSongIsOurs: !!nextName && nextName.toLowerCase() === username,
-    };
+    });
   } catch (e) {
     console.error('e', e);
     return null;

@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import { fromJS, List } from 'immutable';
+import { List } from 'immutable';
 import debounce from 'lodash/debounce';
 import { Provider } from 'react-redux';
-import axios from 'axios';
 import { applyMiddleware } from 'redux';
 import { createStore } from 'redux';
 import { createLogger } from 'redux-logger';
@@ -45,11 +44,6 @@ store.subscribe(
 );
 
 sagaMiddleware.run(notificationSaga);
-
-axios.interceptors.response.use(
-  response => fromJS(response),
-  error => Promise.reject(error),
-);
 
 ReactDom.render(
   <Provider store={store}>

@@ -9,9 +9,6 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          options: {
-            configFile: './config/babel.config.js',
-          },
         },
       },
       {
