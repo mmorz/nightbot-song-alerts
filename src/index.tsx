@@ -20,13 +20,14 @@ const logger = createLogger({ stateTransformer: state => state.toJS() });
 
 const baseMiddleware = List([sagaMiddleware]);
 
+const middlewaresss =
+  process.env.NODE_ENV === 'development'
+    ? baseMiddleware.push(logger)
+    : baseMiddleware;
+
 const store = createStore(
   notificationReducer,
-  applyMiddleware(
-    ...(process.env.NODE_ENV === 'development'
-      ? baseMiddleware.push(logger)
-      : baseMiddleware),
-  ),
+  applyMiddleware(...middlewaresss.toJS()),
 );
 
 store.subscribe(

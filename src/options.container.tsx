@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import debounce from 'lodash/debounce';
 import localStorage from 'local-storage';
+import { Set } from 'immutable';
 
 import TwitchForm from './twitchForm.component';
 import GithubRibbon from './github.component';
@@ -26,7 +27,17 @@ const Header = styled.h2`
   text-align: center;
 `;
 
-class Options extends React.Component {
+interface Props {
+  channels: Set<any>;
+  enabled: boolean;
+  startPolling(a: Set<any>): void;
+  setUsername(a: string): void;
+  onChannelSubmit(a: string): void;
+  deleteChannel: (a: string) => (b: any) => void;
+  toggleNotifications(): void;
+}
+
+class Options extends React.Component<Props> {
   state = {
     newChannel: '',
     username: localStorage.get('username') || '',

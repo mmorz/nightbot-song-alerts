@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Set } from 'immutable';
 
 const Channel = styled.span`
   margin-right: auto;
@@ -53,7 +54,19 @@ const ChannelContainer = styled.ul`
   flex: 1;
 `;
 
-const ChannelList = ({ channels, enabled, handleEnable, deleteChannel }) => (
+interface Props {
+  channels: Set<any>;
+  enabled: boolean;
+  handleEnable: (a: any) => void;
+  deleteChannel: (a: string) => (b: any) => void;
+}
+
+const ChannelList = ({
+  channels,
+  enabled,
+  handleEnable,
+  deleteChannel,
+}: Props) => (
   <Grid>
     <ChannelContainer>
       {channels.map(c => (
