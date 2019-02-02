@@ -1,7 +1,7 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: ['@babel/polyfill', './src/index.tsx'],
+  entry: ['./src/index.tsx'],
   module: {
     rules: [
       {
@@ -22,4 +22,7 @@ module.exports = {
       template: './index.html',
     }),
   ],
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js']
+  }
 };

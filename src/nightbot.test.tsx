@@ -14,6 +14,6 @@ test('fetchNightbotId', async () => {
 test('checkSongQueue', async () => {
   const queue = await checkSongQueue(testId, 'fakeusername');
 
-  assert(queue.get('nextSongIsOurs') === false);
-  assert(queue.get('idForNotification') === null);
+  assert(queue.nextSongIsOurs === false);
+  assert(queue.idForNotification === null);
 });

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "target": "es5",
+    "lib": ["es2015", "dom"],
     "module": "es2015",
     "jsx": "react",
     "allowJs": true,
@@ -9,8 +10,10 @@
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "sourceMap": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "downlevelIteration": true
   },
   "include": [
     "./src/**/*"

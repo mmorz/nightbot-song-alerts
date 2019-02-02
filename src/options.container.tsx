@@ -1,21 +1,22 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, SyntheticEvent } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import debounce from 'lodash/debounce';
 import localStorage from 'local-storage';
-import { Set } from 'immutable';
 
 import TwitchForm from './twitchForm.component';
 import GithubRibbon from './github.component';
 import ChannelList from './channelList.component';
 
-import {
+import { actions } from './notification.ducks';
+
+const {
   setUsername,
   addChannel,
   removeChannel,
   toggleNotifications,
   startPollingChannels,
-} from './notification.ducks';
+} = actions;
 
 const MainColumn = styled.div`
   max-width: 800px;
@@ -28,9 +29,9 @@ const Header = styled.h2`
 `;
 
 interface Props {
-  channels: Set<any>;
+  channels: string[];
   enabled: boolean;
-  startPolling(a: Set<any>): void;
+  startPolling(a: string[]): void;
   setUsername(a: string): void;
   onChannelSubmit(a: string): void;
   deleteChannel: (a: string) => (b: any) => void;
@@ -51,8 +52,8 @@ class Options extends React.Component<Props> {
     }
   }
 
-  changeField = field => e => {
-    this.setState({ [field]: e.target.value });
+  changeField = (field: 'username' | 'newChannel') => (e: SyntheticEvent<HTMLInputElement>) => {
+    this.setState({ [field]: e.currentTarget.value });
   };
 
   saveUsername = debounce(username => {
@@ -84,7 +85,7 @@ class Options extends React.Component<Props> {
               if (!newChannel) return;
 
               this.setState({ newChannel: '' }, () => {
-                !channels.has(newChannelLower) &&
+                !channels.some(c => c === newChannelLower) &&
                   onChannelSubmit(newChannelLower);
               });
             }}

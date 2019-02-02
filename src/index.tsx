@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import { List } from 'immutable';
 import debounce from 'lodash/debounce';
 import { Provider } from 'react-redux';
 import { applyMiddleware } from 'redux';
@@ -16,18 +15,15 @@ import Options from './options.container';
 
 const sagaMiddleware = createSagaMiddleware();
 
-const logger = createLogger({ stateTransformer: state => state.toJS() });
+const baseMiddleware = [sagaMiddleware];
 
-const baseMiddleware = List([sagaMiddleware]);
-
-const middlewaresss =
-  process.env.NODE_ENV === 'development'
-    ? baseMiddleware.push(logger)
-    : baseMiddleware;
+if (process.env.NODE_ENV === 'development') {
+  baseMiddleware.push(createLogger())
+}
 
 const store = createStore(
   notificationReducer,
-  applyMiddleware(...middlewaresss.toJS()),
+  applyMiddleware(...baseMiddleware),
 );
 
 store.subscribe(
@@ -35,9 +31,10 @@ store.subscribe(
     () => {
       console.log('saving state to localstorage...');
       const state = store.getState();
-      localStorage.set('channels', state.get('channels').toJS());
-      localStorage.set('username', state.get('username'));
-      localStorage.set('enabled', state.get('enabled'));
+
+      localStorage.set('channels', state.channels);
+      localStorage.set('username', state.username);
+      localStorage.set('enabled', state.enabled);
     },
     1000,
     { leading: true },

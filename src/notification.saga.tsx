@@ -10,17 +10,15 @@ import {
   cancelled,
   select,
 } from 'redux-saga/effects';
-import { Map } from 'immutable';
+
 import { delay } from 'redux-saga';
 
-import {
-  addChannel,
-  startPollingChannels,
-  removeChannel,
-  createNotification,
-  toggleNotifications,
-} from './notification.ducks';
+import { actions, Store } from './notification.ducks';
 import { fetchNightbotId, checkSongQueue } from './nightbot.api';
+
+function* storeSelect(selector: (a: Store) => any) {
+  return select<Store>(selector);
+}
 
 function* pollChannel(channel) {
   const id = yield call(fetchNightbotId, channel);
@@ -31,11 +29,11 @@ function* pollChannel(channel) {
   }
 
   while (true) {
-    const username = yield select(state => state.get('username'));
+    const username = yield storeSelect(state => state.username);
     let pollInterval = 60 * 1000;
 
-    const oldNotifications = yield select(state =>
-      state.get('oldNotifications'),
+    const oldNotifications = yield storeSelect(state =>
+      state.oldNotifications
     );
 
     try {
@@ -50,7 +48,7 @@ function* pollChannel(channel) {
       );
 
       if (idForNotification && !oldNotifications.has(idForNotification)) {
-        yield put(createNotification(Map({ id: idForNotification, channel })));
+        yield put(actions.createNotification({ id: idForNotification, channel }));
       }
 
       pollInterval = nextSongIsOurs ? 5 * 1000 : 60 * 1000;
@@ -73,16 +71,16 @@ function* startPollingChannel(channel) {
   }
 }
 
-function* startWatchingChannel(channel) {
+function* startWatchingChannel(channel: string) {
   const task = yield fork(startPollingChannel, channel);
 
   while (true) {
     const { remove } = yield race({
-      remove: take(removeChannel),
-      toggleEnable: take(toggleNotifications),
+      remove: take(actions.removeChannel),
+      toggleEnable: take(actions.toggleNotifications),
     });
 
-    const isEnabled = yield select(state => state.get('enabled'));
+    const isEnabled = yield storeSelect(state => state.enabled);
     const removedThis = remove && remove.payload === channel;
 
     if (!isEnabled || removedThis) {
@@ -91,15 +89,15 @@ function* startWatchingChannel(channel) {
   }
 }
 
-function* watchForNewChannel({ payload: channel }) {
-  const enabled = yield select(state => state.get('enabled'));
+function* watchForNewChannel({ payload: channel } : { payload: string, type: string }) {
+  const enabled = yield storeSelect(state => state.enabled);
 
   if (enabled) {
-    yield call(forkChannels, Map({ payload: [channel] }));
+    yield call(forkChannels, { payload: [channel] });
   }
 }
 
-function* forkChannels({ payload: channels }) {
+function* forkChannels({ payload: channels }: { type: string, payload: string[] }) {
   for (const channel of channels) {
     yield fork(startWatchingChannel, channel);
   }
@@ -107,7 +105,7 @@ function* forkChannels({ payload: channels }) {
 
 function* watchNotification() {
   while (true) {
-    const { payload } = yield take(createNotification);
+    const { payload } = yield take(actions.createNotification);
     new Notification(
       `channel ${payload.get('channel')} is now playing your song!`,
     );
@@ -116,13 +114,13 @@ function* watchNotification() {
 
 function* watchEnable() {
   while (true) {
-    yield take(toggleNotifications);
-    const isEnabled = yield select(state => state.get('enabled'));
+    yield take(actions.toggleNotifications);
+    const isEnabled = yield select<Store>(state => state.enabled);
 
     if (isEnabled) {
-      const channels = yield select(state => state.get('channels'));
+      const channels = yield select<Store>(state => state.channels);
 
-      yield fork(forkChannels, Map({ payload: channels }));
+      yield fork(forkChannels, { payload: channels });
     }
   }
 }
@@ -130,8 +128,8 @@ function* watchEnable() {
 function* main() {
   yield all([
     call(watchEnable),
-    takeEvery(addChannel, watchForNewChannel),
-    takeEvery(startPollingChannels, forkChannels),
+    takeEvery(actions.addChannel, watchForNewChannel),
+    takeEvery(actions.startPollingChannels, forkChannels),
     call(watchNotification),
   ]);
 }

@@ -1,19 +1,13 @@
 import axios from 'axios';
-import { fromJS, Map } from 'immutable';
 
 const NIGHTBOT_ID_API = 'https://api.nightbot.tv/1/channels/t/';
 const NIGHTBOT_QUEUE_URL = 'https://api.nightbot.tv/1/song_requests/queue';
 
-axios.interceptors.response.use(
-  response => fromJS(response),
-  error => Promise.reject(error),
-);
-
-export const fetchNightbotId = async channel => {
+export const fetchNightbotId = async (channel: string) => {
   try {
     const { data } = await axios.get(NIGHTBOT_ID_API + channel);
 
-    return data.getIn(['channel', '_id']);
+    return data.channel._id;
   } catch ({ response }) {
     console.error('response', response);
     if (response.status === 404) {
@@ -26,7 +20,7 @@ export const fetchNightbotId = async channel => {
   return null;
 };
 
-export const checkSongQueue = async (channelId, username) => {
+export const checkSongQueue = async (channelId: string, username: string) => {
   try {
     const { data } = await axios.get(NIGHTBOT_QUEUE_URL, {
       headers: {
@@ -34,15 +28,16 @@ export const checkSongQueue = async (channelId, username) => {
       },
     });
 
-    const _id = data.getIn(['_currentSong', '_id']);
-    const currentName = data.getIn(['_currentSong', 'user', 'name']);
-    const nextName = data.getIn(['queue', 0, 'user', 'name']);
+    const _id = data._currentSong._id;
+    const currentName = data._currentSong.user.name;
+    const nextName = data.queue[0].user.name;
 
-    return Map({
+    return {
       idForNotification:
         !!currentName && currentName.toLowerCase() === username ? _id : null,
       nextSongIsOurs: !!nextName && nextName.toLowerCase() === username,
-    });
+    };
+
   } catch (e) {
     console.error('e', e);
     return null;

@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Set } from 'immutable';
 
 const Channel = styled.span`
   margin-right: auto;
@@ -55,7 +54,7 @@ const ChannelContainer = styled.ul`
 `;
 
 interface Props {
-  channels: Set<any>;
+  channels: string[];
   enabled: boolean;
   handleEnable: (a: any) => void;
   deleteChannel: (a: string) => (b: any) => void;
