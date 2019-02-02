@@ -8,7 +8,7 @@ import TwitchForm from './twitchForm.component';
 import GithubRibbon from './github.component';
 import ChannelList from './channelList.component';
 
-import { actions } from './notification.ducks';
+import { actions, Store } from './notification.ducks';
 
 const {
   setUsername,
@@ -29,9 +29,9 @@ const Header = styled.h2`
 `;
 
 interface Props {
-  channels: string[];
+  channels: ReadonlyArray<string>;
   enabled: boolean;
-  startPolling(a: string[]): void;
+  startPolling(a: ReadonlyArray<string>): void;
   setUsername(a: string): void;
   onChannelSubmit(a: string): void;
   deleteChannel: (a: string) => (b: any) => void;
@@ -76,7 +76,7 @@ class Options extends React.Component<Props> {
             newChannel={newChannel}
             onUsernameChange={e => {
               this.changeField('username')(e);
-              this.saveUsername(e.target.value.toLowerCase());
+              this.saveUsername(e.currentTarget.value.toLowerCase());
             }}
             onNewChannel={this.changeField('newChannel')}
             onSubmit={e => {
@@ -115,12 +115,12 @@ class Options extends React.Component<Props> {
 }
 
 export default connect(
-  ({ channels, enabled }) => ({ channels, enabled }),
+  ({ channels, enabled }: Store) => ({ channels, enabled }),
   dispatch => ({
-    deleteChannel: c => () => dispatch(removeChannel(c)),
-    onChannelSubmit: channel => dispatch(addChannel(channel)),
+    deleteChannel: (c: string) => () => dispatch(removeChannel(c)),
+    onChannelSubmit: (channel: string) => dispatch(addChannel(channel)),
     toggleNotifications: () => dispatch(toggleNotifications()),
-    startPolling: channels => dispatch(startPollingChannels(channels)),
-    setUsername: username => dispatch(setUsername(username)),
+    startPolling: (channels: string[]) => dispatch(startPollingChannels(channels)),
+    setUsername: (username: string) => dispatch(setUsername(username)),
   }),
 )(Options);

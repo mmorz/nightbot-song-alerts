@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, SyntheticEvent } from 'react';
 import styled from 'styled-components';
 
 const AddButton = styled.button`
@@ -14,13 +14,21 @@ const ChannelRow = styled.div`
   display: flex;
 `;
 
+interface Props {
+  username: string;
+  newChannel: string;
+  onSubmit(a: SyntheticEvent<HTMLFormElement>): void;
+  onNewChannel(a: SyntheticEvent<HTMLInputElement>): void;
+  onUsernameChange(a: SyntheticEvent<HTMLInputElement>): void;
+}
+
 const TwitchForm = ({
   onSubmit,
   username,
   newChannel,
   onNewChannel,
   onUsernameChange,
-}) => (
+}: Props) => (
   <Fragment>
     <p>Get notified when your song request starts to play.</p>
     <form onSubmit={onSubmit}>

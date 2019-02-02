@@ -11,6 +11,8 @@ import {
   select,
 } from 'redux-saga/effects';
 
+import { ActionType } from 'typesafe-actions';
+
 import { delay } from 'redux-saga';
 
 import { actions, Store } from './notification.ducks';
@@ -20,7 +22,7 @@ function* storeSelect(selector: (a: Store) => any) {
   return select<Store>(selector);
 }
 
-function* pollChannel(channel) {
+function* pollChannel(channel: string) {
   const id = yield call(fetchNightbotId, channel);
   if (!id) {
     console.error('skipping polling because couldnt find id...');
@@ -60,7 +62,7 @@ function* pollChannel(channel) {
   }
 }
 
-function* startPollingChannel(channel) {
+function* startPollingChannel(channel: string) {
   try {
     console.log('started polling for:', channel);
     yield call(pollChannel, channel);
@@ -89,15 +91,15 @@ function* startWatchingChannel(channel: string) {
   }
 }
 
-function* watchForNewChannel({ payload: channel } : { payload: string, type: string }) {
+function* watchForNewChannel({ payload: channel }: ActionType<typeof actions.addChannel>) {
   const enabled = yield storeSelect(state => state.enabled);
 
   if (enabled) {
-    yield call(forkChannels, { payload: [channel] });
+    yield call(forkChannels, actions.startPollingChannels([channel]));
   }
 }
 
-function* forkChannels({ payload: channels }: { type: string, payload: string[] }) {
+function* forkChannels({ payload: channels }: ActionType<typeof actions.startPollingChannels>) {
   for (const channel of channels) {
     yield fork(startWatchingChannel, channel);
   }
@@ -120,7 +122,7 @@ function* watchEnable() {
     if (isEnabled) {
       const channels = yield select<Store>(state => state.channels);
 
-      yield fork(forkChannels, { payload: channels });
+      yield fork(forkChannels, actions.startPollingChannels(channels));
     }
   }
 }

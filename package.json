@@ -22,8 +22,13 @@
     "@babel/preset-react": "7.0.0",
     "@types/chrome": "0.0.77",
     "@types/jest": "23.3.13",
+    "@types/local-storage": "1.4.0",
+    "@types/lodash": "4.14.120",
     "@types/react": "16.7.18",
+    "@types/react-dom": "16.0.11",
+    "@types/react-redux": "7.0.1",
     "@types/redux-actions": "2.3.1",
+    "@types/redux-logger": "3.0.6",
     "@types/styled-components": "4.1.5",
     "ava": "1.0.1",
     "babel-core": "7.0.0-bridge.0",
@@ -51,7 +56,6 @@
     "webpack-dev-server": "3.1.14"
   },
   "dependencies": {
-    "@types/local-storage": "1.4.0",
     "axios": "0.18.0",
     "chai": "^4.2.0",
     "local-storage": "1.4.2",

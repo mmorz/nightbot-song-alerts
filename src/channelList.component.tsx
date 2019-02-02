@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import styled from 'styled-components';
 
 const Channel = styled.span`
@@ -54,9 +54,9 @@ const ChannelContainer = styled.ul`
 `;
 
 interface Props {
-  channels: string[];
+  channels: ReadonlyArray<string>;
   enabled: boolean;
-  handleEnable: (a: any) => void;
+  handleEnable: (a: SyntheticEvent<HTMLElement>) => void;
   deleteChannel: (a: string) => (b: any) => void;
 }
 

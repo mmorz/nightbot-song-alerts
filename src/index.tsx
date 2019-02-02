@@ -3,7 +3,7 @@ import ReactDom from 'react-dom';
 import debounce from 'lodash/debounce';
 import { Provider } from 'react-redux';
 import { applyMiddleware } from 'redux';
-import { createStore } from 'redux';
+import { createStore, Middleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import localStorage from 'local-storage';
@@ -15,7 +15,7 @@ import Options from './options.container';
 
 const sagaMiddleware = createSagaMiddleware();
 
-const baseMiddleware = [sagaMiddleware];
+const baseMiddleware: Middleware[] = [sagaMiddleware];
 
 if (process.env.NODE_ENV === 'development') {
   baseMiddleware.push(createLogger())
