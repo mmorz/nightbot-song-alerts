@@ -9,7 +9,6 @@ export const fetchNightbotId = async (channel: string) => {
 
     return data.channel._id;
   } catch ({ response }) {
-    console.error('response', response);
     if (response.status === 404) {
       console.error('http 404 when fetchin id for', channel);
     } else {
@@ -20,26 +19,34 @@ export const fetchNightbotId = async (channel: string) => {
   return null;
 };
 
+interface User {
+  name: string;
+}
+
+interface Song {
+  _id: string;
+  user: User;
+}
+
+interface QeueuResponse {
+  _currentSong?: Song;
+  queue: Song[];
+}
+
 export const checkSongQueue = async (channelId: string, username: string) => {
-  try {
-    const { data } = await axios.get(NIGHTBOT_QUEUE_URL, {
-      headers: {
-        'nightbot-channel': channelId,
-      },
-    });
+  const { data } = await axios.get<QeueuResponse>(NIGHTBOT_QUEUE_URL, {
+    headers: {
+      'nightbot-channel': channelId,
+    },
+  });
 
-    const _id = data._currentSong._id;
-    const currentName = data._currentSong.user.name;
-    const nextName = data.queue[0].user.name;
+  const _id = data._currentSong ? data._currentSong._id : null;
+  const currentName = data._currentSong ? data._currentSong.user.name : null;
+  const nextName = data.queue[0].user.name;
 
-    return {
-      idForNotification:
-        !!currentName && currentName.toLowerCase() === username ? _id : null,
-      nextSongIsOurs: !!nextName && nextName.toLowerCase() === username,
-    };
-
-  } catch (e) {
-    console.error('e', e);
-    return null;
-  }
+  return {
+    idForNotification:
+      !!currentName && currentName.toLowerCase() === username ? _id : null,
+    nextSongIsOurs: !!nextName && nextName.toLowerCase() === username,
+  };
 };
