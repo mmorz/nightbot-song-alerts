@@ -15,8 +15,8 @@ const ChannelRow = styled.div`
 `;
 
 interface Props {
-  username: string;
-  newChannel: string;
+  readonly username: string;
+  readonly newChannel: string;
   onSubmit(a: SyntheticEvent<HTMLFormElement>): void;
   onNewChannel(a: SyntheticEvent<HTMLInputElement>): void;
   onUsernameChange(a: SyntheticEvent<HTMLInputElement>): void;

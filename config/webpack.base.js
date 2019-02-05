@@ -7,6 +7,19 @@ module.exports = {
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
+        enforce: 'pre',
+        use: [
+            {
+                loader: 'tslint-loader',
+                options: {
+                  typeCheck: true
+                }
+            }
+        ]
+      },
+      {
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
         use: {
           loader: 'ts-loader',
         },

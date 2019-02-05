@@ -1,44 +1,43 @@
-import React from 'react';
-import ReactDom from 'react-dom';
-import debounce from 'lodash/debounce';
-import { Provider } from 'react-redux';
-import { applyMiddleware } from 'redux';
-import { createStore, Middleware } from 'redux';
-import { createLogger } from 'redux-logger';
-import createSagaMiddleware from 'redux-saga';
-import localStorage from 'local-storage';
-import 'milligram';
-
-import notificationSaga from './notification.saga';
-import notificationReducer from './notification.ducks';
-import Options from './options.container';
+import localStorage from "local-storage";
+import debounce from "lodash/debounce";
+import "milligram";
+import React from "react";
+import ReactDom from "react-dom";
+import { Provider } from "react-redux";
+import { applyMiddleware, createStore, Middleware } from "redux";
+import { createLogger } from "redux-logger";
+import createSagaMiddleware from "redux-saga";
+import notificationReducer from "./notification.ducks";
+import notificationSaga from "./notification.saga";
+import Options from "./options.container";
 
 const sagaMiddleware = createSagaMiddleware();
 
-const baseMiddleware: Middleware[] = [sagaMiddleware];
+const baseMiddleware: ReadonlyArray<Middleware> = [sagaMiddleware];
 
-if (process.env.NODE_ENV === 'development') {
-  baseMiddleware.push(createLogger())
-}
+const storeMiddleware =
+  process.env.NODE_ENV === "development"
+    ? [...baseMiddleware, createLogger()]
+    : baseMiddleware;
 
 const store = createStore(
   notificationReducer,
-  applyMiddleware(...baseMiddleware),
+  applyMiddleware(...storeMiddleware)
 );
 
 store.subscribe(
   debounce(
     () => {
-      console.log('saving state to localstorage...');
+      console.log("saving state to localstorage...");
       const state = store.getState();
 
-      localStorage.set('channels', state.channels);
-      localStorage.set('username', state.username);
-      localStorage.set('enabled', state.enabled);
+      localStorage.set("channels", state.channels);
+      localStorage.set("username", state.username);
+      localStorage.set("enabled", state.enabled);
     },
     1000,
-    { leading: true },
-  ),
+    { leading: true }
+  )
 );
 
 sagaMiddleware.run(notificationSaga);
@@ -47,5 +46,5 @@ ReactDom.render(
   <Provider store={store}>
     <Options />
   </Provider>,
-  document.querySelector('#app'),
+  document.querySelector("#app")
 );

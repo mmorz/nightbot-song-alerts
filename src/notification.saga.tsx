@@ -1,32 +1,36 @@
+// https://github.com/redux-saga/redux-saga/issues/1504
+/* tslint:disable:no-unsafe-any */
+
 import {
-  race,
-  put,
-  cancel,
-  takeEvery,
-  call,
   all,
-  fork,
-  take,
+  call,
+  cancel,
   cancelled,
+  delay,
+  fork,
+  put,
+  race,
   select,
-} from 'redux-saga/effects';
+  take,
+  takeEvery
+} from "redux-saga/effects";
 
-import { ActionType } from 'typesafe-actions';
+import { ActionType } from "typesafe-actions";
 
-import { delay } from 'redux-saga';
+import { checkSongQueue, fetchNightbotId } from "./nightbot.api";
+import { actions, Store } from "./notification.ducks";
 
-import { actions, Store } from './notification.ducks';
-import { fetchNightbotId, checkSongQueue } from './nightbot.api';
-
-function* storeSelect(selector: (a: Store) => any) {
-  return select<Store>(selector);
+function* storeSelect(selector: (a: Store) => unknown) {
+  yield select(selector);
 }
 
 function* pollChannel(channel: string) {
-  const id = yield call(fetchNightbotId, channel);
+  const id: string = yield call(fetchNightbotId, channel);
   if (!id) {
-    console.error('skipping polling because couldnt find id...');
-    new Notification('Cannot find song requests for ' + channel);
+    console.error("skipping polling because couldnt find id...");
+
+    // tslint:disable-next-line
+    new Notification("Cannot find song requests for " + channel);
     return;
   }
 
@@ -34,41 +38,40 @@ function* pollChannel(channel: string) {
     const username = yield storeSelect(state => state.username);
     let pollInterval = 60 * 1000;
 
-    const oldNotifications = yield storeSelect(state =>
-      state.oldNotifications
-    );
+    const oldNotifications = yield storeSelect(state => state.oldNotifications);
 
     try {
       const { idForNotification, nextSongIsOurs } = yield call(
         checkSongQueue,
         id,
-        username,
+        username
       );
       console.log(
-        // eslint-disable-next-line
-        `poll for ${channel}: next: ${nextSongIsOurs}, idfornotif: ${idForNotification}`
+        `poll for ${channel}: next: ${nextSongIsOurs}, idfornotif: ${idForNotification}`  // tslint:disable-line
       );
 
-      if (idForNotification && !oldNotifications.has(idForNotification)) {
-        yield put(actions.createNotification({ id: idForNotification, channel }));
+      if (idForNotification && !oldNotifications.includes(idForNotification)) {
+        yield put(
+          actions.createNotification({ id: idForNotification, channel })
+        );
       }
 
       pollInterval = nextSongIsOurs ? 5 * 1000 : 60 * 1000;
     } catch (e) {
-      console.error('error polling:', channel, e);
+      console.error("error polling:", channel, e);
     }
 
-    yield call(delay, pollInterval);
+    yield delay(pollInterval);
   }
 }
 
 function* startPollingChannel(channel: string) {
   try {
-    console.log('started polling for:', channel);
+    console.log("started polling for:", channel);
     yield call(pollChannel, channel);
   } finally {
     if (yield cancelled()) {
-      console.log('ended polling', channel);
+      console.log("ended polling", channel);
     }
   }
 }
@@ -79,7 +82,7 @@ function* startWatchingChannel(channel: string) {
   while (true) {
     const { remove } = yield race({
       remove: take(actions.removeChannel),
-      toggleEnable: take(actions.toggleNotifications),
+      toggleEnable: take(actions.toggleNotifications)
     });
 
     const isEnabled = yield storeSelect(state => state.enabled);
@@ -91,7 +94,9 @@ function* startWatchingChannel(channel: string) {
   }
 }
 
-function* watchForNewChannel({ payload: channel }: ActionType<typeof actions.addChannel>) {
+function* watchForNewChannel({
+  payload: channel
+}: ActionType<typeof actions.addChannel>) {
   const enabled = yield storeSelect(state => state.enabled);
 
   if (enabled) {
@@ -99,7 +104,9 @@ function* watchForNewChannel({ payload: channel }: ActionType<typeof actions.add
   }
 }
 
-function* forkChannels({ payload: channels }: ActionType<typeof actions.startPollingChannels>) {
+function* forkChannels({
+  payload: channels
+}: ActionType<typeof actions.startPollingChannels>) {
   for (const channel of channels) {
     yield fork(startWatchingChannel, channel);
   }
@@ -108,8 +115,10 @@ function* forkChannels({ payload: channels }: ActionType<typeof actions.startPol
 function* watchNotification() {
   while (true) {
     const { payload } = yield take(actions.createNotification);
+
+    // tslint:disable-next-line
     new Notification(
-      `channel ${payload.get('channel')} is now playing your song!`,
+      `channel ${payload.get("channel")} is now playing your song!`
     );
   }
 }
@@ -117,10 +126,10 @@ function* watchNotification() {
 function* watchEnable() {
   while (true) {
     yield take(actions.toggleNotifications);
-    const isEnabled = yield select<Store>(state => state.enabled);
+    const isEnabled = yield storeSelect(state => state.enabled);
 
     if (isEnabled) {
-      const channels = yield select<Store>(state => state.channels);
+      const channels = yield storeSelect(state => state.channels);
 
       yield fork(forkChannels, actions.startPollingChannels(channels));
     }
@@ -132,7 +141,7 @@ function* main() {
     call(watchEnable),
     takeEvery(actions.addChannel, watchForNewChannel),
     takeEvery(actions.startPollingChannels, forkChannels),
-    call(watchNotification),
+    call(watchNotification)
   ]);
 }
 

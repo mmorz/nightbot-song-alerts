@@ -16,9 +16,9 @@ const DeleteButton = styled.button`
 const ListRow = styled.li`
   align-items: center;
   display: flex;
+
   margin: 0 0;
   padding: 7px 0;
-
   border-bottom: 1px solid #d1d1d1;
 
   &:last-child {
@@ -40,8 +40,9 @@ const EnableColumn = styled.div`
 `;
 
 const EnableButton = styled.button`
-  margin: 0 auto;
   display: block;
+
+  margin: 0 auto;
 
   @media (max-width: 600px) {
     margin: 0 0;
@@ -54,10 +55,10 @@ const ChannelContainer = styled.ul`
 `;
 
 interface Props {
-  channels: ReadonlyArray<string>;
-  enabled: boolean;
-  handleEnable: (a: SyntheticEvent<HTMLElement>) => void;
-  deleteChannel: (a: string) => (b: any) => void;
+  readonly channels: ReadonlyArray<string>;
+  readonly enabled: boolean;
+  readonly handleEnable: (a: SyntheticEvent<HTMLElement>) => void;
+  readonly deleteChannel: (a: string) => (b: unknown) => void;
 }
 
 const ChannelList = ({
