@@ -1,4 +1,3 @@
-var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: ['./src/index.tsx'],
@@ -30,11 +29,7 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './index.html',
-    }),
-  ],
+  plugins: [],
   resolve: {
     extensions: ['.tsx', '.ts', '.js']
   }

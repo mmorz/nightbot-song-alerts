@@ -20,9 +20,9 @@ export const actions = {
 };
 
 const initialState = {
-  username: localStorage.get("username") as string || "",
-  channels: localStorage.get("channels") as ReadonlyArray<string> || [],
-  enabled: localStorage.get("enabled") as boolean || false,
+  username: localStorage.get("username") || "",
+  channels: localStorage.get("channels") || [] as ReadonlyArray<string>,
+  enabled: localStorage.get("enabled") || false,
   oldNotifications: []
 };
 
@@ -39,7 +39,7 @@ const reducer = (
 ): Store => {
   switch (action.type) {
     case getType(actions.setUsername):
-      return { ...state, username: action.type };
+      return { ...state, username: action.payload };
 
     case getType(actions.addChannel):
       return { ...state, channels: [...state.channels, action.payload] };
