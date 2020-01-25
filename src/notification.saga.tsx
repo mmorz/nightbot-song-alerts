@@ -18,7 +18,8 @@ import {
 import { ActionType } from "typesafe-actions";
 
 import { checkSongQueue, fetchNightbotId } from "./nightbot.api";
-import { actions, Store } from "./notification.ducks";
+import { actions } from "./notification.ducks";
+import { Store } from "./notification.types";
 
 function* storeSelect(selector: (a: Store) => unknown) {
   const storeItem = yield select(selector);

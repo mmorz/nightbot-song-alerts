@@ -4,9 +4,9 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import ChannelList from "./channelList.component";
 import GithubRibbon from "./github.component";
-import { getStorageJson } from "./localStorage";
-import { actions, Store } from "./notification.ducks";
+import { actions } from "./notification.ducks";
 import TwitchForm from "./twitchForm.component";
+import { Store } from "./notification.types";
 
 const {
   setUsername,
@@ -29,6 +29,7 @@ const Header = styled.h2`
 interface Props {
   readonly channels: ReadonlyArray<string>;
   readonly enabled: boolean;
+  readonly username: string | null;
   readonly deleteChannel: (a: string) => (b: unknown) => void;
   startPolling(a: ReadonlyArray<string>): void;
   setUsername(a: string): void;
@@ -44,7 +45,7 @@ interface State {
 class Options extends React.Component<Props, State> {
   state = {
     newChannel: "",
-    username: (getStorageJson("username") as string) || ""
+    username: this.props.username || ""
   };
 
   saveUsername = debounce((username: string) => {
@@ -120,7 +121,7 @@ class Options extends React.Component<Props, State> {
 }
 
 export default connect(
-  ({ channels, enabled }: Store) => ({ channels, enabled }),
+  ({ channels, enabled, username }: Store) => ({ channels, enabled, username }),
   dispatch => ({
     deleteChannel: (c: string) => () => dispatch(removeChannel(c)),
     onChannelSubmit: (channel: string) => dispatch(addChannel(channel)),

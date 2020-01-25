@@ -1,5 +1,6 @@
 import { ActionType, createAction, getType } from "typesafe-actions";
-import { getStorageJson } from "./localStorage";
+import { loadInitialStore } from "./localStorage";
+import { Store } from "./notification.types";
 
 interface NewNotification {
   readonly id: string;
@@ -19,19 +20,7 @@ export const actions = {
   >()
 };
 
-const initialState = {
-  username: getStorageJson("username") || "",
-  channels: getStorageJson("channels") || [] as ReadonlyArray<string>,
-  enabled: getStorageJson("enabled") || false,
-  oldNotifications: []
-};
-
-export interface Store {
-  readonly username: string;
-  readonly channels: ReadonlyArray<string>;
-  readonly enabled: boolean;
-  readonly oldNotifications: ReadonlyArray<string>;
-}
+const initialState = loadInitialStore();
 
 const reducer = (
   state: Store = initialState,
