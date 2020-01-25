@@ -8,12 +8,12 @@ module.exports = {
         exclude: /node_modules/,
         enforce: 'pre',
         use: [
-            {
-                loader: 'tslint-loader',
-                options: {
-                  typeCheck: true
-                }
+          {
+            loader: 'tslint-loader',
+            options: {
+              typeCheck: true
             }
+          }
         ]
       },
       {
@@ -23,10 +23,8 @@ module.exports = {
           loader: 'ts-loader',
         },
       },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
-      },
+      { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+      { test: /\.(png|svg|jpg|gif)$/, use: 'file-loader' },
     ],
   },
   plugins: [],

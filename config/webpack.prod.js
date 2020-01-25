@@ -25,6 +25,6 @@ base.plugins.push(
   })
 );
 base.plugins.push(new webpack.DefinePlugin(['SENTRY_DSN']));
-base.output.filename = '[name].[contenthash].js';
+base.output = { filename: '[name].[contenthash].js' };
 
 module.exports = base;
