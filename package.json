@@ -10,7 +10,7 @@
     "lint": "tslint -p .",
     "deploy": "npm run build && gh-pages -d dist",
     "test": "jest --silent",
-    "travis": "npm run lint && npm run test"
+    "travis": "npm run lint && npm run test && cypress run"
   },
   "keywords": [],
   "author": "",

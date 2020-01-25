@@ -34,7 +34,12 @@ const TwitchForm = ({
     <form onSubmit={onSubmit}>
       <div>
         Enter your twitch username:
-        <input value={username} onChange={onUsernameChange} type="text" />
+        <input
+          id="username-field"
+          value={username}
+          onChange={onUsernameChange}
+          type="text"
+        />
       </div>
 
       <div>
@@ -42,6 +47,7 @@ const TwitchForm = ({
         <ChannelRow>
           <ChannelInput
             name="newChannel"
+            id="add-channel"
             type="text"
             value={newChannel}
             onChange={onNewChannel}
