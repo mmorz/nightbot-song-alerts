@@ -1,10 +1,10 @@
-import localStorage from "local-storage";
 import debounce from "lodash/debounce";
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import ChannelList from "./channelList.component";
 import GithubRibbon from "./github.component";
+import { getStorageJson } from "./localStorage";
 import { actions, Store } from "./notification.ducks";
 import TwitchForm from "./twitchForm.component";
 
@@ -44,7 +44,7 @@ interface State {
 class Options extends React.Component<Props, State> {
   state = {
     newChannel: "",
-    username: (localStorage.get("username") as string) || ""
+    username: (getStorageJson("username") as string) || ""
   };
 
   saveUsername = debounce((username: string) => {

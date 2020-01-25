@@ -1,5 +1,5 @@
-import localStorage from "local-storage";
 import { ActionType, createAction, getType } from "typesafe-actions";
+import { getStorageJson } from "./localStorage";
 
 interface NewNotification {
   readonly id: string;
@@ -20,9 +20,9 @@ export const actions = {
 };
 
 const initialState = {
-  username: localStorage.get("username") || "",
-  channels: localStorage.get("channels") || [] as ReadonlyArray<string>,
-  enabled: localStorage.get("enabled") || false,
+  username: getStorageJson("username") || "",
+  channels: getStorageJson("channels") || [] as ReadonlyArray<string>,
+  enabled: getStorageJson("enabled") || false,
   oldNotifications: []
 };
 

@@ -1,4 +1,3 @@
-import localStorage from "local-storage";
 import debounce from "lodash/debounce";
 import "milligram";
 import React from "react";
@@ -7,6 +6,7 @@ import { Provider } from "react-redux";
 import { applyMiddleware, createStore, Middleware } from "redux";
 import { createLogger } from "redux-logger";
 import createSagaMiddleware from "redux-saga";
+import { setStorageJson } from "./localStorage";
 import notificationReducer from "./notification.ducks";
 import notificationSaga from "./notification.saga";
 import Options from "./options.container";
@@ -31,9 +31,9 @@ store.subscribe(
       console.log("saving state to localstorage...");
       const state = store.getState();
 
-      localStorage.set("channels", state.channels);
-      localStorage.set("username", state.username);
-      localStorage.set("enabled", state.enabled);
+      setStorageJson("channels", state.channels);
+      setStorageJson("username", state.username);
+      setStorageJson("enabled", state.enabled);
     },
     1000,
     { leading: true }
