@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --progress --config ./config/webpack.dev.js",
+    "start": "webpack-dev-server --config ./config/webpack.dev.js",
     "build": "webpack --config ./config/webpack.prod.js --progress",
     "lint": "tslint -p .",
     "deploy": "npm run build && gh-pages -d dist",

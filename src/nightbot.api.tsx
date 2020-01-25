@@ -60,7 +60,7 @@ export const checkSongQueue = async (
 
   const id = data._currentSong ? data._currentSong._id : null;
   const currentName = data._currentSong ? data._currentSong.user.name : null;
-  const nextName = data.queue[0].user.name;
+  const nextName = data.queue.length ? data.queue[0].user.name : null;
 
   return {
     idForNotification:
