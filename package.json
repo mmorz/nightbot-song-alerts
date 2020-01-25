@@ -26,6 +26,7 @@
     "@types/redux-logger": "3.0.7",
     "@types/styled-components": "4.4.2",
     "css-loader": "3.4.2",
+    "cypress": "^3.8.3",
     "extensible-runtime": "4.1.0",
     "file-loader": "5.0.2",
     "gh-pages": "2.2.0",
