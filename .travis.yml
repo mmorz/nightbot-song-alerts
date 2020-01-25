@@ -1,5 +1,6 @@
-language: node_js
-node_js:
-  - "10"
+sudo: required
+services:
+  - docker
 script:
-  - npm run travis
+  - docker build -t songalerts-cypress .
+  - docker run songalerts-cypress
