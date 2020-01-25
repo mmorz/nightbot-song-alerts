@@ -1,5 +1,5 @@
 import localStorage from "local-storage";
-import { ActionType, createStandardAction, getType } from "typesafe-actions";
+import { ActionType, createAction, getType } from "typesafe-actions";
 
 interface NewNotification {
   readonly id: string;
@@ -7,14 +7,14 @@ interface NewNotification {
 }
 
 export const actions = {
-  setUsername: createStandardAction("SET_USERNAME")<string>(),
-  addChannel: createStandardAction("ADD_CHANNEL")<string>(),
-  removeChannel: createStandardAction("REMOVE_CHANNEL")<string>(),
-  toggleNotifications: createStandardAction("TOGGLE_NOTIFICATIONS")(),
-  startPollingChannels: createStandardAction("START_POLLING")<
+  setUsername: createAction("SET_USERNAME")<string>(),
+  addChannel: createAction("ADD_CHANNEL")<string>(),
+  removeChannel: createAction("REMOVE_CHANNEL")<string>(),
+  toggleNotifications: createAction("TOGGLE_NOTIFICATIONS")(),
+  startPollingChannels: createAction("START_POLLING")<
     ReadonlyArray<string>
   >(),
-  createNotification: createStandardAction("CREATE_NOTIFICATION")<
+  createNotification: createAction("CREATE_NOTIFICATION")<
     NewNotification
   >()
 };
