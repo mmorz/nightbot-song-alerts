@@ -10,8 +10,17 @@ import { setStorageJson } from "./localStorage";
 import notificationReducer from "./notification.ducks";
 import notificationSaga from "./notification.saga";
 import Options from "./options.container";
+import * as Sentry from "@sentry/browser";
 
-const sagaMiddleware = createSagaMiddleware();
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+});
+
+const sagaMiddleware = createSagaMiddleware({ onError(err) {
+  Sentry.captureException(err);
+  console.error(err);
+}});
 
 const baseMiddleware: ReadonlyArray<Middleware> = [sagaMiddleware];
 

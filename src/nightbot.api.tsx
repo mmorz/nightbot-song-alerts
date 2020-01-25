@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError } from "axios";
 
 const NIGHTBOT_ID_API = "https://api.nightbot.tv/1/channels/t/";
 const NIGHTBOT_QUEUE_URL = "https://api.nightbot.tv/1/song_requests/queue";
@@ -14,19 +14,22 @@ interface IdSuccess {
 export const fetchNightbotId = async (
   channel: string
 ): Promise<string | null> => {
+  if (channel === "sentrymockerror") {
+    throw new Error("sentry mocked error");
+  }
+
   try {
     const { data } = await axios.get<IdSuccess>(NIGHTBOT_ID_API + channel);
 
     return data.channel._id;
-  } catch ({ response }) {
-    if ((response as AxiosResponse).status === 404) {
-      console.error("http 404 when fetchin id for", channel);
+  } catch (err) {
+    if ((err as AxiosError).response?.status === 404) {
+      console.warn("http 404 when fetchin id for", channel);
+      return null;
     } else {
-      console.error("error fetchin channel", channel, response);
+      throw err;
     }
   }
-
-  return null;
 };
 
 interface User {

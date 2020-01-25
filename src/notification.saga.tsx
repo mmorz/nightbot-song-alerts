@@ -21,13 +21,15 @@ import { checkSongQueue, fetchNightbotId } from "./nightbot.api";
 import { actions, Store } from "./notification.ducks";
 
 function* storeSelect(selector: (a: Store) => unknown) {
-  yield select(selector);
+  const storeItem = yield select(selector);
+
+  return storeItem;
 }
 
 function* pollChannel(channel: string) {
   const id: string = yield call(fetchNightbotId, channel);
   if (!id) {
-    console.error("skipping polling because couldnt find id...");
+    console.warn("skipping polling because couldnt find id...");
 
     // tslint:disable-next-line
     new Notification("Cannot find song requests for " + channel);
@@ -40,26 +42,22 @@ function* pollChannel(channel: string) {
 
     const oldNotifications = yield storeSelect(state => state.oldNotifications);
 
-    try {
-      const { idForNotification, nextSongIsOurs } = yield call(
-        checkSongQueue,
-        id,
-        username
-      );
-      console.log(
-        `poll for ${channel}: next: ${nextSongIsOurs}, idfornotif: ${idForNotification}`  // tslint:disable-line
-      );
+    const { idForNotification, nextSongIsOurs } = yield call(
+      checkSongQueue,
+      id,
+      username
+    );
+    console.log(
+      `poll for ${channel}: next: ${nextSongIsOurs}, idfornotif: ${idForNotification}`  // tslint:disable-line
+    );
 
-      if (idForNotification && !oldNotifications.includes(idForNotification)) {
-        yield put(
-          actions.createNotification({ id: idForNotification, channel })
-        );
-      }
-
-      pollInterval = nextSongIsOurs ? 5 * 1000 : 60 * 1000;
-    } catch (e) {
-      console.error("error polling:", channel, e);
+    if (idForNotification && !oldNotifications.includes(idForNotification)) {
+      yield put(
+        actions.createNotification({ id: idForNotification, channel })
+      );
     }
+
+    pollInterval = nextSongIsOurs ? 5 * 1000 : 60 * 1000;
 
     yield delay(pollInterval);
   }
@@ -98,7 +96,6 @@ function* watchForNewChannel({
   payload: channel
 }: ActionType<typeof actions.addChannel>) {
   const enabled = yield storeSelect(state => state.enabled);
-
   if (enabled) {
     yield call(forkChannels, actions.startPollingChannels([channel]));
   }
