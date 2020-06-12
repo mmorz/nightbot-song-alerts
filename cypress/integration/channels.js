@@ -10,5 +10,6 @@ describe('channel listing', () => {
     cy.contains('delete').click();
 
     cy.contains('delete').should('not.exist');
+    cy.percySnapshot();
   });
 })
