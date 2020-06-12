@@ -7,6 +7,7 @@ const AddButton = styled.button`
 
 const ChannelInput = styled.input`
   min-width: 0;
+  font-size: 30px;
   flex: 1;
 `;
 
